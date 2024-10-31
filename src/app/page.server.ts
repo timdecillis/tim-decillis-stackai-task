@@ -1,7 +1,12 @@
+import { ResourceType } from "@/types";
+
+const connectionID: string = "55b3d64d-4ac2-4b00-bd18-018007398ccf";
+
 async function fetchAccessToken() {
-  const baseURL = "https://sb.stack-ai.com/auth/v1/token?grant_type=password";
-  const password = process.env.PASSWORD;
-  const apikey = process.env.API_KEY;
+  const baseURL: string =
+    "https://sb.stack-ai.com/auth/v1/token?grant_type=password";
+  const password: string | undefined = process.env.PASSWORD;
+  const apikey: string | undefined = process.env.API_KEY;
 
   const response = await fetch(baseURL, {
     method: "POST",
@@ -17,24 +22,39 @@ async function fetchAccessToken() {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch todos");
+    throw new Error("Failed to fetch resources");
   }
-  const json = await response.json();
-  const accessToken = json.access_token;
+  const json: {
+    access_token: string;
+    [k: string]: unknown;
+  } = await response.json();
+  const accessToken: string = json.access_token;
 
   return accessToken;
 }
 
 export async function fetchResources() {
-  const accessToken = await fetchAccessToken();
-  const connectionID = "55b3d64d-4ac2-4b00-bd18-018007398ccf";
-  const URL = `https://api.stack-ai.com/connections/${connectionID}/resources/children`;
+  const accessToken: string = await fetchAccessToken();
+  const URL: string = `https://api.stack-ai.com/connections/${connectionID}/resources/children`;
   const response = await fetch(URL, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  const json = await response.json();
+  const json: ResourceType[] = await response.json();
+  return json;
+}
+
+export async function fetchSingleResource(resource_id: string) {
+  const accessToken: string = await fetchAccessToken();
+  const URL: string = `https://api.stack-ai.com/connections/${connectionID}/resources/children?resource_id=${resource_id}`;
+  const response = await fetch(URL, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const json: ResourceType[] = await response.json();
   return json;
 }
