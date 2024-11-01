@@ -18,4 +18,15 @@ export type ResourceCardPropsType = {
   type: string;
   i: number;
   id: string;
+  token: string | null;
+};
+
+export type CardPropsType = {
+  name: string;
+  handleClick: () => void;
+};
+
+export type ResourcesDisplayPropsType = {
+  json: ResourceType[];
+  token: string;
 };

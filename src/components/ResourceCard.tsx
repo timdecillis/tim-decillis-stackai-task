@@ -1,29 +1,24 @@
 "use client";
 import { fetchSingleResource } from "@/app/page.server";
 import { ResourceCardPropsType } from "@/types";
-import React from "react";
+import FolderCard from "./FolderCard";
+import FileCard from "./FileCard";
+import ResourcesDisplay from "./ResourcesDisplay";
 
-function ResourceCard({ name, type, id }: ResourceCardPropsType) {
+function ResourceCard({ name, type, id, token }: ResourceCardPropsType) {
+  let info;
   const handleClick = async () => {
-    const info = await fetchSingleResource(id);
-    console.log("INFO:", info);
+    const response = await fetchSingleResource(id, token);
+    info = response;
   };
   return (
-    <div
-      onClick={handleClick}
-      className="flex border-b-2 items-center hover:cursor-pointer"
-    >
+    <div onClick={handleClick} className="flex border-b-2 items-center">
       {type === "directory" ? (
-        <>
-          <i className="fa-regular fa-folder"></i>
-          <div className="ml-2">{name}</div>
-        </>
+        <FolderCard handleClick={handleClick} name={name} />
       ) : (
-        <>
-          <i className="fa-regular fa-file"></i>
-          <div className="ml-2">{name}</div>
-        </>
+        <FileCard handleClick={handleClick} name={name} />
       )}
+      {info && <ResourcesDisplay resources={info} />}
     </div>
   );
 }
